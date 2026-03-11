@@ -1,0 +1,40 @@
+// Online Store Order Flow
+graph "Order Processing" {
+
+    // Simple nodes
+    node start "Customer Visits"
+    node browse "Browse Products"
+    node cart "Shopping Cart"
+    node checkout "Checkout"
+    node review "Order Review"
+
+    // Expanded nodes with styling
+    node payment {
+        title: "Payment Gateway"
+        style {
+            fill: true
+            color: "#4CAF50"
+            shape: circle
+        }
+    }
+
+    node success {
+        title: "Order Confirmed"
+        style {
+            fill: true
+            color: "#2196F3"
+        }
+    }
+
+    node declined "Payment Declined"
+    node cancelled "Order Cancelled"
+    node shipped "Shipped"
+    node delivered "Delivered"
+    node returned "Returned"
+
+    // Simple chain - no labels
+    start -> browse -> cart
+
+    // Labeled chain
+    cart -> "proceed" -> checkout -> "confirm" -> review
+}

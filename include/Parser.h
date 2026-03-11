@@ -61,12 +61,14 @@ enum class Shapes {
 using StyleValue = std::variant<std::string, bool, Shapes>;
 
 class Style {
-  private:
+  public:
     enum class Type {
         FILLING,
         COLOR,
         SHAPE,
     } type;
+
+  private:
     StyleValue value;
 
     Style(Type t, StyleValue v) : type(t), value(std::move(v)) {}
@@ -87,11 +89,13 @@ class Style {
 using StyleFields = std::vector<Style>;
 using NodeValues = std::variant<std::string, StyleFields>;
 struct NodeField {
-  private:
+  public:
     enum class NodeType {
         TITLE,
         STYLE,
     } type;
+
+  private:
     NodeValues value;
     NodeField(NodeType nt, NodeValues nv) : type(nt), value(std::move(nv)) {}
 
@@ -112,12 +116,13 @@ struct NodeField {
 
 using NodeBodyValue = std::variant<std::string, std::vector<NodeField>>;
 class NodeBody {
-  private:
+  public:
     enum class Type {
         SIMPLE,
         EXPANDED,
     } type;
 
+  private:
     NodeBodyValue value;
     NodeBody(Type tt, NodeBodyValue val) : type(tt), value(std::move(val)) {}
 

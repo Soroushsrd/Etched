@@ -17,7 +17,7 @@ endif()
 include_directories(${PROJECT_SOURCE_DIR}/include/)
 
 # Source files
-file(GLOB_RECURSE SOURCES main.cpp src/*.cpp)
+file(GLOB_RECURSE SOURCES main.cpp ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 # Executable
 add_executable(${PROJECT_NAME} ${SOURCES})

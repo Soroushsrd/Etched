@@ -186,7 +186,7 @@ void Layout::assignGridPositions(const std::vector<std::string> &order) {
 void Layout::computePixelCoords() {
     for (auto &[id, node] : nodeMap) {
         node.x = padX + node.col * cellW;
-        node.y = padY + node.col * cellH;
+        node.y = padY + node.row * cellH;
     }
 }
 

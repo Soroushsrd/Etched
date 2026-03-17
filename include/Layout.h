@@ -11,6 +11,12 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+// Represents a single node after layout has been computed.
+// It holds the node's id (matching what the parser gave it),
+// a readable title (node auth "login": id->auth and title->Login),
+// grid coordinates (col,row), pixl coordinates (x, y) dimensions (width,
+// height), and a shape aware flag
 struct LayoutNode {
     std::string id;
     std::string title;
@@ -28,6 +34,10 @@ struct LayoutNode {
     bool isCircle = false;
 };
 
+// flat, render friendly edge
+// Since parser's structure (EdgeNode, Edge) is tree shaped and harder to
+// iterate, flattening it using this struct allows easier iteration in the next
+// pass
 struct LayoutEdge {
     std::string from;
     std::string to;
@@ -35,6 +45,9 @@ struct LayoutEdge {
     std::string label;
 };
 
+// Output contract and everything the renderer needs.
+// Nodes wit hcomputed positions, flat edges, and total canvas dimensions are
+// inside this struct which allows sizing the SVG viewBox
 struct LayoutResult {
     std::vector<LayoutNode> nodes;
     std::vector<LayoutEdge> edges;
@@ -50,18 +63,42 @@ class Layout {
 
   private:
     // extract a flat adjacency list + node info from AST
+    // Its the first pass! builds declMap from node declarations, registers
+    // every declared node into nodeMap (resolves titles and checks shapes) then
+    // walks every EdgeNode in the edge stmts to populate adk,inDegree and
+    // edges
     void buildGraph(const GraphBody &body);
     // Kahn's algo for topo sort
+    // runs Kahns algo on adj and inDegree. Seeds the BFS queue wit hzero
+    // indegree nodes then repeatedly pops a node, appends it to order,
+    // decrements the indegree of its neighbours
     std::vector<std::string> topoSort();
     // assign grid positions to pxel coordinates
+    // takes the topo order and assigns col/row to each node using longest path
+    // layering. For each node in order, it scan edges to find all preds and
+    // takes max(predecessor_col)+1 as its column meaning the node that depends
+    // on two preds gets pushed right of both. within each column a colRowCount
+    // map tracks the next available row so multiple nodes in the same column
+    // stack vertically
     void assignGridPositions(const std::vector<std::string> &order);
     // convert grid position to pixel coordinates
     void computePixelCoords();
 
+    // estimates how wide a node box has to be based on its
+    // title's character count.
+    // TODO: right now it uses charCount * 8.5 + 220. we need
+    // to use font metrics for real text measurement
     double measureTxtWidth(const std::string &txt) const;
+
+    // helper method
+    // Given a node id, checks if declMap has it.  if not, the id is the tile
+    // for that node
     std::string resolveTitle(const std::string &id) const;
 
-    // configs
+    // ------------------
+    // | Configurations |
+    // ------------------
+
     // horizontal spacing between cols
     static constexpr double cellW = 220.0;
     // vertical spacing between rows
@@ -76,14 +113,34 @@ class Layout {
     // horizontal padding inside node
     static constexpr double textPad = 220.0;
 
-    // intermediate state
+    // ----------------------
+    // | Intermediate State |
+    // ----------------------
+
+    // id -> NodeDeclaration*
+    // a lookup table built from parsed node declarations. used for resolving
+    // titles and checking for circle shapes
     std::unordered_map<std::string, const NodeDeclaration *> declMap;
+    // id->LayoutNode
+    // a working state for every node seen so far wether declared or refd in an
+    // edge. Nodes that appear in edges but have no node declaration are still
+    // valid they get their id as their title
     std::unordered_map<std::string, LayoutNode> nodeMap;
+    // a flat list that gets built during buildGraph() method.
     std::vector<LayoutEdge> edges;
 
-    // adjacency info for topo sort
+    // ---------------------------------------
+    // | Adjacency Info For Topological Sort |
+    // ------------------ --------------------
+
+    // adj[src] lists all nodes src points to!
     std::unordered_map<std::string, std::vector<std::string>> adj;
+    // inDegree[id] counts how many nodes point into id
     std::unordered_map<std::string, int> inDegree;
     // all node ids in insertion order
+    // allIDS preserves insertion order for all node ids. This matters because
+    // std::unordered_map doesn't give me a stable iteration order. when
+    // seeding Kahn's queue, we want a deterministic traversal order, not
+    // hash-bucket order.
     std::vector<std::string> allIDS;
 };

@@ -1,0 +1,107 @@
+// ============================================================
+// Graph DSL - PEG Grammar
+// ============================================================
+
+// ------------------------------------------------------------
+// Top-level
+// ------------------------------------------------------------
+
+Program         <- Spacing GraphDecl+ EndOfFile
+
+GraphDecl       <- GRAPH StringLiteral LBRACE GraphBody RBRACE
+
+GraphBody       <- (NodeDecl / EdgeStmt / Comment)*
+
+// ------------------------------------------------------------
+// Node Declarations
+// ------------------------------------------------------------
+
+NodeDecl        <- NODE Identifier ( SimpleNodeBody / ExpandedNodeBody )
+
+SimpleNodeBody  <- StringLiteral
+
+ExpandedNodeBody <- LBRACE
+                      NodeField (COMMA? NodeField)*
+                    RBRACE
+
+NodeField       <- TitleField / StyleField
+
+TitleField      <- TITLE COLON StringLiteral
+
+StyleField      <- STYLE LBRACE
+                     StyleProp (COMMA? StyleProp)*
+                   RBRACE
+
+StyleProp       <- Identifier COLON StyleValue
+
+StyleValue      <- StringLiteral / Identifier / Number / Boolean
+
+// ------------------------------------------------------------
+// Edge Statements
+// ------------------------------------------------------------
+
+EdgeStmt        <- EdgeGroup (AND EdgeBranch)*
+
+EdgeGroup       <- LPAREN EdgeChain RPAREN
+                 / EdgeChain
+
+EdgeBranch      <- EdgeLabel? ARROW Identifier EdgeChainTail*
+
+EdgeChain       <- Identifier EdgeChainTail+
+
+EdgeChainTail   <- ARROW EdgeLabel ARROW Identifier
+                 / ARROW Identifier
+
+EdgeLabel       <- StringLiteral
+
+// ------------------------------------------------------------
+// Tokens
+// ------------------------------------------------------------
+
+// Keywords
+GRAPH           <- 'graph'   !IdentCont Spacing
+NODE            <- 'node'    !IdentCont Spacing
+TITLE           <- 'title'   !IdentCont Spacing
+STYLE           <- 'style'   !IdentCont Spacing
+
+// Operators & Delimiters
+ARROW           <- '->'      Spacing
+AND             <- '&&'      Spacing
+LBRACE          <- '{'       Spacing
+RBRACE          <- '}'       Spacing
+LPAREN          <- '('       Spacing
+RPAREN          <- ')'       Spacing
+COLON           <- ':'       Spacing
+COMMA           <- ','       Spacing
+
+// Identifiers
+Identifier      <- IdentStart IdentCont* Spacing
+
+IdentStart      <- [a-zA-Z_]
+IdentCont       <- [a-zA-Z0-9_]
+
+// Literals
+StringLiteral   <- '"' StringChar* '"' Spacing
+
+StringChar      <- '\\' EscapeChar
+                 / !'"' .
+
+EscapeChar      <- ["\\/bfnrt]
+
+Number          <- '-'? [0-9]+ ('.' [0-9]+)? Spacing
+
+Boolean         <- ('true' / 'false') !IdentCont Spacing
+
+// ------------------------------------------------------------
+// Comments & Whitespace
+// ------------------------------------------------------------
+
+Comment         <- '//' (!EndOfLine .)* EndOfLine Spacing
+
+Spacing         <- (WhiteSpace / EndOfLine)*
+
+WhiteSpace      <- [ \t]
+
+EndOfLine       <- '\r\n' / '\r' / '\n'
+
+EndOfFile       <- !.

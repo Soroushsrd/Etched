@@ -1,0 +1,130 @@
+#+TITLE: Topological Ordering & Kahn's Algorithm
+#+DATE: 2026-03-18
+#+OPTIONS: toc:2
+
+* What is a Topological Ordering?
+
+Imagine your graph is a set of tasks where some tasks must happen before others.
+A topological ordering is a sequence where every node appears /after/ all the
+nodes that point to it.
+
+For a straight chain:
+
+#+BEGIN_EXAMPLE
+start -> browse -> cart -> checkout
+#+END_EXAMPLE
+
+The only valid topological order is =[start, browse, cart, checkout]=.
+That's the only valid one here since it's a straight chain. But for a branching graph:
+
+#+BEGIN_EXAMPLE
+start -> browse
+start -> search
+browse -> cart
+search -> cart
+#+END_EXAMPLE
+
+Both of these are valid:
+
+- =[start, browse, search, cart]=
+- =[start, search, browse, cart]=
+
+The only constraint is that =start= comes before both =browse= and =search=,
+and both of those come before =cart=. The relative order of =browse= and
+=search= doesn't matter; neither depends on the other.
+
+* Why Would You Need It?
+
+For layout. When assigning columns, we need to know a node's column before we
+can assign columns to its children. A topological order guarantees that when
+processing any given node, all of its predecessors have already been processed.
+
+Without it we be computing =col = max(predecessor_col) + 1= before you even
+know what the predecessor's column is.
+
+* How Kahn's Algorithm Works
+
+The key insight: /a node with no incoming edges has nothing before it, so it can safely go first./
+
+Kahn's algorithm exploits this repeatedly:
+
+1. Find all nodes with =inDegree == 0= (nothing points to them), so they're
+   safe to place first. Seed the queue with these.
+2. Pop a node from the queue, add it to your output order.
+3. For each of its neighbors, pretend the edge from this node to them no longer
+   exists and decrement their =inDegree=.
+4. If any neighbor's =inDegree= just hit zero, all its predecessors have been
+   placed and it's now safe to add to the queue.
+5. Repeat until the queue is empty.
+
+* Walkthroughs
+
+** Linear Chain
+
+#+BEGIN_EXAMPLE
+start -> browse -> cart -> checkout
+#+END_EXAMPLE
+
+Initial in-degrees: =start=0, browse=1, cart=1, checkout=1=
+
+#+BEGIN_EXAMPLE
+Queue: [start]
+
+Pop start    → order: [start]
+             → decrement browse (1→0), push browse
+
+Queue: [browse]
+
+Pop browse   → order: [start, browse]
+             → decrement cart (1→0), push cart
+
+Queue: [cart]
+
+Pop cart     → order: [start, browse, cart]
+             → decrement checkout (1→0), push checkout
+
+Queue: [checkout]
+
+Pop checkout → order: [start, browse, cart, checkout]
+             → no neighbors
+
+Done. Order: [start, browse, cart, checkout]
+#+END_EXAMPLE
+
+** Branching Graph
+
+#+BEGIN_EXAMPLE
+start -> browse
+start -> search
+browse -> cart
+search -> cart
+#+END_EXAMPLE
+
+Initial in-degrees: =start=0, browse=1, search=1, cart=2=
+
+#+BEGIN_EXAMPLE
+Queue: [start]
+
+Pop start    → order: [start]
+             → decrement browse (1→0), push browse
+             → decrement search (1→0), push search
+
+Queue: [browse, search]
+
+Pop browse   → order: [start, browse]
+             → decrement cart (2→1), not zero — don't push
+
+Pop search   → order: [start, browse, search]
+             → decrement cart (1→0), push cart
+
+Queue: [cart]
+
+Pop cart     → order: [start, browse, search, cart]
+             → no neighbors
+
+Done. Order: [start, browse, search, cart]
+#+END_EXAMPLE
+
+Notice =cart= only entered the queue after *both* its predecessors were
+processed — that's exactly the guarantee needed for column assignment to work
+correctly.

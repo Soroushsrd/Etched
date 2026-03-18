@@ -123,7 +123,7 @@ class Layout {
     // ------------------
 
     // horizontal spacing between cols
-    static constexpr double cellW = 220.0;
+    static constexpr double cellW = 400.0;
     // vertical spacing between rows
     static constexpr double cellH = 120.0;
     // left/ top margin
@@ -134,7 +134,7 @@ class Layout {
     // char width for sizing
     static constexpr double charW = 8.5;
     // horizontal padding inside node
-    static constexpr double textPad = 220.0;
+    static constexpr double textPad = 40.0;
 
     // ----------------------
     // | Intermediate State |

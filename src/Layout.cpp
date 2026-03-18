@@ -71,6 +71,12 @@ void Layout::buildGraph(const GraphBody &body) {
                                 if (s.getType() == Style::Type::SHAPE &&
                                     s.as_shape() == Shapes::CIRCLE) {
                                     ln.isCircle = true;
+                                    // TODO: for now the radius is computed as:
+                                    // half the text width + some padding
+                                    double textW = ln.title.size() * charW;
+                                    double r = (textW / 2.0) + 20.0;
+                                    ln.width = r * 2.0;
+                                    ln.height = r * 2.0;
                                 }
                             }
                         }
@@ -204,7 +210,8 @@ void Layout::assignGridPositions(const std::vector<std::string> &order) {
 void Layout::computePixelCoords() {
     for (auto &[id, node] : nodeMap) {
         node.x = padX + node.col * cellW;
-        node.y = padY + node.row * cellH;
+        // center verticcally within the cell
+        node.y = padY + node.row * cellH + (cellH - node.height) / 2.0;
     }
 }
 

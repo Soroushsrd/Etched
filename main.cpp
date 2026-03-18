@@ -6,6 +6,7 @@
  */
 
 #include "Layout.h"
+#include "SVGEmitter.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -27,6 +28,16 @@ void run_file(std::ifstream &file) {
     Layout layout;
     auto result = layout.compute(pr.getGraphDecls().getBody());
     result.print();
+
+    SVGEmitter emitter;
+    auto svg = emitter.emit(result);
+
+    std::ofstream output("outputtest.svg");
+    if (!output) {
+        std::cerr << "Could not write output.svg\n";
+        return;
+    }
+    output << svg;
 }
 
 int main(int argc, char *argv[]) {

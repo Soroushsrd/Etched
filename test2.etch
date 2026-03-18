@@ -5,12 +5,12 @@ graph "Order Processing" {
     node start "Customer Visits"
     node browse "Browse Products"
     node cart "Shopping Cart"
-    node checkout "Checkout"
+    node payment "Payment Gateway"
     node review "Order Review"
 
     // Expanded nodes with styling
-    node payment {
-        title: "Payment Gateway"
+    node checkout {
+        title: "Checkout"
         style {
             fill: true
             color: "#4CAF50"
@@ -37,4 +37,11 @@ graph "Order Processing" {
 
     // Labeled chain
     cart -> "proceed" -> checkout -> "confirm" -> review
+    review -> "pay" -> payment
+    payment -> "success" -> success
+    payment -> "declined" -> declined
+    success -> shipped
+    shipped -> delivered
+    delivered -> "return" -> returned
+    declined -> cancelled
 }

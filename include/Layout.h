@@ -53,6 +53,28 @@ struct LayoutResult {
     std::vector<LayoutEdge> edges;
     double totalWidth = 0.0;
     double totalHeight = 0.0;
+
+    void print() {
+        std::cout << "=== Layout Result ===\n";
+        std::cout << "Canvas: " << totalWidth << " x " << totalHeight << "\n\n";
+
+        std::cout << "Nodes:\n";
+        for (const auto &n : nodes) {
+            std::cout << "  " << n.id << " [" << n.title << "]"
+                      << "  grid=(" << n.col << "," << n.row << ")"
+                      << "  pos=(" << n.x << "," << n.y << ")"
+                      << "  size=" << n.width << "x" << n.height
+                      << (n.isCircle ? "  CIRCLE" : "") << "\n";
+        }
+
+        std::cout << "\nEdges:\n";
+        for (const auto &e : edges) {
+            std::cout << "  " << e.from << " -> " << e.to;
+            if (!e.label.empty())
+                std::cout << "  [" << e.label << "]";
+            std::cout << "\n";
+        }
+    }
 };
 
 class Layout {
@@ -64,22 +86,23 @@ class Layout {
   private:
     // extract a flat adjacency list + node info from AST
     // Its the first pass! builds declMap from node declarations, registers
-    // every declared node into nodeMap (resolves titles and checks shapes) then
-    // walks every EdgeNode in the edge stmts to populate adk,inDegree and
-    // edges
+    // every declared node into nodeMap (resolves titles and checks shapes)
+    // then walks every EdgeNode in the edge stmts to populate adk,inDegree
+    // and edges
     void buildGraph(const GraphBody &body);
     // Kahn's algo for topo sort
     // runs Kahns algo on adj and inDegree. Seeds the BFS queue wit hzero
     // indegree nodes then repeatedly pops a node, appends it to order,
     // decrements the indegree of its neighbours
+    // read the **docs/Topological Ordering.org** file
     std::vector<std::string> topoSort();
     // assign grid positions to pxel coordinates
-    // takes the topo order and assigns col/row to each node using longest path
-    // layering. For each node in order, it scan edges to find all preds and
-    // takes max(predecessor_col)+1 as its column meaning the node that depends
-    // on two preds gets pushed right of both. within each column a colRowCount
-    // map tracks the next available row so multiple nodes in the same column
-    // stack vertically
+    // takes the topo order and assigns col/row to each node using longest
+    // path layering. For each node in order, it scan edges to find all
+    // preds and takes max(predecessor_col)+1 as its column meaning the node
+    // that depends on two preds gets pushed right of both. within each
+    // column a colRowCount map tracks the next available row so multiple
+    // nodes in the same column stack vertically
     void assignGridPositions(const std::vector<std::string> &order);
     // convert grid position to pixel coordinates
     void computePixelCoords();
@@ -91,8 +114,8 @@ class Layout {
     double measureTxtWidth(const std::string &txt) const;
 
     // helper method
-    // Given a node id, checks if declMap has it.  if not, the id is the tile
-    // for that node
+    // Given a node id, checks if declMap has it.  if not, the id is the
+    // tile for that node
     std::string resolveTitle(const std::string &id) const;
 
     // ------------------
@@ -118,13 +141,13 @@ class Layout {
     // ----------------------
 
     // id -> NodeDeclaration*
-    // a lookup table built from parsed node declarations. used for resolving
-    // titles and checking for circle shapes
+    // a lookup table built from parsed node declarations. used for
+    // resolving titles and checking for circle shapes
     std::unordered_map<std::string, const NodeDeclaration *> declMap;
     // id->LayoutNode
-    // a working state for every node seen so far wether declared or refd in an
-    // edge. Nodes that appear in edges but have no node declaration are still
-    // valid they get their id as their title
+    // a working state for every node seen so far wether declared or refd in
+    // an edge. Nodes that appear in edges but have no node declaration are
+    // still valid they get their id as their title
     std::unordered_map<std::string, LayoutNode> nodeMap;
     // a flat list that gets built during buildGraph() method.
     std::vector<LayoutEdge> edges;
@@ -138,9 +161,9 @@ class Layout {
     // inDegree[id] counts how many nodes point into id
     std::unordered_map<std::string, int> inDegree;
     // all node ids in insertion order
-    // allIDS preserves insertion order for all node ids. This matters because
-    // std::unordered_map doesn't give me a stable iteration order. when
-    // seeding Kahn's queue, we want a deterministic traversal order, not
-    // hash-bucket order.
+    // allIDS preserves insertion order for all node ids. This matters
+    // because std::unordered_map doesn't give me a stable iteration order.
+    // when seeding Kahn's queue, we want a deterministic traversal order,
+    // not hash-bucket order.
     std::vector<std::string> allIDS;
 };

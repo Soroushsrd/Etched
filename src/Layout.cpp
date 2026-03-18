@@ -12,16 +12,19 @@
 
 std::string Layout::resolveTitle(const std::string &id) const {
     auto it = declMap.find(id);
+    // if the node declaration doesnt have a title,
+    // return the id itself
     if (it == declMap.end()) {
         return id;
     }
 
     const auto &body = it->second->getBody();
+    // in case its a simple node, it only has a title for a body
     if (body.getType() == NodeBody::Type::SIMPLE) {
         return body.as_string();
     }
 
-    // if expanded node
+    // if expanded node, check its body
     for (const auto &field : body.as_fields()) {
         if (field.getType() == NodeField::NodeType::TITLE) {
             return field.as_string();
@@ -35,24 +38,30 @@ double Layout::measureTxtWidth(const std::string &txt) const {
 }
 
 void Layout::buildGraph(const GraphBody &body) {
-    // build id -> decl loopup
+    // build id -> decl lookup table
     for (const auto &nd : body.getNodes()) {
         declMap[nd.getName()] = &nd;
     }
 
-    // registering all decl nodes
+    // registering all decl nodes into nodeMap
     for (const auto &nd : body.getNodes()) {
         const auto &id = nd.getName();
         if (nodeMap.find(id) == nodeMap.end()) {
+            // filling the allIDS vector with an insertion order
             allIDS.push_back(id);
             inDegree[id] = 0;
             LayoutNode ln;
             ln.id = id;
             ln.title = resolveTitle(id);
             ln.width = measureTxtWidth(ln.title);
+            // TODO: for now a hardcoded node height is used.
+            // later on i should calculate the height based on whats inside it
+            // or add a size input to a node declaration so users can input
+            // their desired node size
             ln.height = nodeH;
 
-            // if circle
+            // to see if a node shape is specified as a circle, we need to walk
+            // inside
             if (declMap.count(id)) {
                 const auto &nodeBody = declMap.at(id)->getBody();
                 if (nodeBody.getType() == NodeBody::Type::EXPANDED) {
@@ -90,13 +99,22 @@ void Layout::buildGraph(const GraphBody &body) {
     // so: connection from edges[i] to edges[i+1], label is edges[i].label
     for (const auto &en : body.getEdges()) {
         for (size_t i = 0; i + 1 < en.edges.size(); i++) {
+            // TODO: this part assumes that we have a flat structure with each
+            // edge connected to their previous one. when i modify the edgeNode
+            // strucutre to allow multiple edges (&&) out of one node, i should
+            // modify this part. Grouping should also be considered
             const auto &src = en.edges[i].name;
             const auto &dst = en.edges[i + 1].name;
             std::string lbl =
                 en.edges[i].label.has_value() ? en.edges[i].label.value() : "";
 
             // both nodes must exist in map
-            // this handles nodes refd in edges but not declared with 'node'
+            // TODO: this handles nodes refd in edges but not declared with
+            // 'node' i should think this through again. allowing nodes to be
+            // declared without prior declarations outside their usage makes the
+            // DSL less strict and im not sure i want that. If im to check for
+            // these errors, a small semantic analyzer must be implemented and
+            // this part removed
             for (const auto &nid : {src, dst}) {
                 if (nodeMap.find(nid) == nodeMap.end()) {
                     allIDS.push_back(nid);

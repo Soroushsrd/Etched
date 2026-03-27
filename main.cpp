@@ -6,6 +6,7 @@
  */
 
 #include "Layout.h"
+#include "Result.h"
 #include "SVGEmitter.h"
 #include <fstream>
 #include <iostream>

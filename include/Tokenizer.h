@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "Result.h"
 #include <cstddef>
 #include <iostream>
 #include <ostream>
@@ -81,8 +82,7 @@ class Tokenizer {
     Tokenizer() = default;
     Tokenizer(const std::string &source)
         : sourceChars(source.begin(), source.end()), sourceString(source) {}
-    void Tokenize();
-    std::vector<Token> &getTokens() { return tokens; }
+    Result<std::vector<Token>> Tokenize();
 
   private:
     size_t start = 0;
@@ -129,8 +129,8 @@ class Tokenizer {
     bool matches(char input);
     void handleDigit();
     void handleIdentifier();
-    void handleString();
-    void scanTokens();
+    Result<void> handleString();
+    Result<void> scanTokens();
 };
 
 std::ostream &operator<<(std::ostream &os, const TokenType &tt);

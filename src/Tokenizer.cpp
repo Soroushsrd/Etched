@@ -8,7 +8,7 @@
 #include "Tokenizer.h"
 #include <cctype>
 #include <iostream>
-#include <string>
+#include <vector>
 
 std::ostream &operator<<(std::ostream &os, TokenType &tt) {
     switch (tt.get_tag()) {
@@ -63,8 +63,6 @@ std::ostream &operator<<(std::ostream &os, TokenType &tt) {
 }
 
 void Tokenizer::addToken(TokenType tt) {
-    // std::string txt{sourceChars.begin() + start, sourceChars.begin() +
-    // current};
     tokens.emplace_back(std::move(tt), line, startColumn);
 }
 
@@ -129,7 +127,7 @@ void Tokenizer::handleIdentifier() {
     addToken(getKeyword(txt));
 }
 
-void Tokenizer::handleString() {
+Result<void> Tokenizer::handleString() {
     while (peek() != '"' && !isAtEnd()) {
         if (peek() == '\n') {
             line++;
@@ -148,8 +146,8 @@ void Tokenizer::handleString() {
     }
 
     if (isAtEnd()) {
-        std::cerr << "Unterminated string literal\n";
-        return;
+        return Result<void>::err("Tokenizer", "Unterminated string literal",
+                                 line, column);
     }
 
     std::string txt(sourceChars.begin() + start + 1,
@@ -158,9 +156,10 @@ void Tokenizer::handleString() {
     advance();
 
     addToken(TokenType::literal(txt));
+    return Result<void>::ok();
 }
 
-void Tokenizer::scanTokens() {
+Result<void> Tokenizer::scanTokens() {
     char c = advance();
 
     switch (c) {
@@ -168,66 +167,69 @@ void Tokenizer::scanTokens() {
         if (matches('>')) {
             addToken(TokenType::simple(TokenTag::ARROW));
         } else {
-            std::cerr << "Missing '>'\n";
+            return Result<void>::err("Tokenizer", "Missing '>'", line, column);
         }
 
-        return;
+        return Result<void>::ok();
     }
     case '&': {
         if (matches('&')) {
             addToken(TokenType::simple(TokenTag::AND));
         } else {
-            std::cerr << "Missing '&'\n";
+            return Result<void>::err("Tokenizer", "Missing '&'", line, column);
         }
-        return;
+        return Result<void>::ok();
     }
     case '{': {
         addToken(TokenType::simple(TokenTag::LBRACE));
-        return;
+        return Result<void>::ok();
     }
 
     case '}': {
         addToken(TokenType::simple(TokenTag::RBRACE));
-        return;
+        return Result<void>::ok();
     }
     case '(': {
         addToken(TokenType::simple(TokenTag::LPAREN));
-        return;
+        return Result<void>::ok();
     }
     case ')': {
         addToken(TokenType::simple(TokenTag::RPAREN));
-        return;
+        return Result<void>::ok();
     }
     case ',': {
         addToken(TokenType::simple(TokenTag::COMMA));
-        return;
+        return Result<void>::ok();
     }
     case ':': {
         addToken(TokenType::simple(TokenTag::COLON));
-        return;
+        return Result<void>::ok();
     }
     case ';': {
         addToken(TokenType::simple(TokenTag::SEMICOLON));
-        return;
+        return Result<void>::ok();
     }
     case '"': {
-        handleString();
-        return;
+        auto r = handleString();
+        if (!r) {
+            return r;
+        }
+        return Result<void>::ok();
     }
     case ' ': {
-        return;
+        return Result<void>::ok();
     }
     case '\t': {
         column += 3;
-        return;
+        return Result<void>::ok();
     }
     case '\r': {
-        return;
+        return Result<void>::ok();
     }
     case '\n': {
         line++;
         column = 1;
-        return;
+        return Result<void>::ok();
     }
     case '/': {
         if (matches('/')) {
@@ -235,9 +237,9 @@ void Tokenizer::scanTokens() {
                 advance();
             }
         } else {
-            std::cerr << "Missing '/'\n";
+            return Result<void>::err("Tokenizer", "Missing '/'", line, column);
         }
-        return;
+        return Result<void>::ok();
     }
     default: {
         if (std::isdigit(c)) {
@@ -245,25 +247,30 @@ void Tokenizer::scanTokens() {
         } else if (std::isalpha(c)) {
             handleIdentifier();
         } else {
-            std::cerr << "Unkwnown Token: " << c << std::endl;
+            return Result<void>::err(
+                "Tokenizer", std::format("Unknown Token: {}", c), line, column);
         }
-        return;
+        return Result<void>::ok();
     }
     }
 }
 
-void Tokenizer::Tokenize() {
+Result<std::vector<Token>> Tokenizer::Tokenize() {
     while (!isAtEnd()) {
         start = current;
         startColumn = column;
-        scanTokens();
+        auto r = scanTokens();
+        if (!r) {
+            std::cerr << r.error().format() << std ::endl;
+            return Result<std::vector<Token>>::err(r.error());
+        }
     }
 
     addToken(TokenType::simple(TokenTag::END));
+    return Result<std::vector<Token>>::ok(std::move(tokens));
 }
 
 void printToken(Token &token) {
     std::cout << "Type: " << token.type << ", line: " << token.line
               << ", column: " << token.column << std::endl;
 }
-// TODO: getCurrentLine

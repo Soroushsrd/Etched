@@ -12,19 +12,21 @@
 #include <iostream>
 #include <sstream>
 
+// TODO: If a string is unterminated inside the expanded nodes, it shows up as
+// unknown token errors. fix it. it should throw unterminated string error
+
 void run_file(std::ifstream &file) {
     std::stringstream ss;
     ss << file.rdbuf();
     std::string sourceString = ss.str();
 
     Tokenizer tokenizer(sourceString);
-    tokenizer.Tokenize();
-    // for (auto &token : tokenizer.getTokens()) {
-    //     printToken(token);
-    // }
-    Parser parser(tokenizer.getTokens());
+    auto tokens = tokenizer.Tokenize();
+    if (tokens.isErr()) {
+        return;
+    }
+    Parser parser(tokens.value());
     auto pr = parser.parse();
-    // printProgram(pr);
 
     Layout layout;
     auto result = layout.compute(pr.getGraphDecls().getBody());

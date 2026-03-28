@@ -75,23 +75,23 @@ template <typename T> class Result {
 
     T &value() & {
         if (isErr())
-            throw std::logic_error("Result::value() called on Error: ",
-                                   +std::get<Error>(data).format());
+            throw std::logic_error("Result::value() called on Error: " +
+                                   std::get<Error>(data).format());
         return std::get<T>(data);
     }
 
     const T &value() const & {
         if (isErr())
-            throw std::logic_error("Result::value() called on Error: ",
-                                   +std::get<Error>(data).format());
+            throw std::logic_error("Result::value() called on Error: " +
+                                   std::get<Error>(data).format());
         return std::get<T>(data);
     }
 
     // move the value out if it exists
     T take() && {
         if (isErr())
-            throw std::logic_error("Result::take() called on Error: ",
-                                   +std::get<Error>(data).format());
+            throw std::logic_error("Result::take() called on Error: " +
+                                   std::get<Error>(data).format());
         return std::move(std::get<T>(data));
     }
 

@@ -12,9 +12,6 @@
 #include <iostream>
 #include <sstream>
 
-// TODO: If a string is unterminated inside the expanded nodes, it shows up as
-// unknown token errors. fix it. it should throw unterminated string error
-
 void run_file(std::ifstream &file) {
     std::stringstream ss;
     ss << file.rdbuf();

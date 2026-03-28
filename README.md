@@ -49,8 +49,7 @@ graph "Order Processing" {
 Requires a C++23 compiler and CMake 3.5 or later.
 
 ```bash
-cmake -B build
-cmake --build build
+Make all
 ```
 
 ## Usage

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3828.0 325.0" width="3828.0" height="325.0">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="black" /></marker>
+  </defs>
+  <line x1="143.8" y1="120.0" x2="543.8" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="543.8" y1="120.0" x2="935.2" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="935.2" y1="120.0" x2="1314.0" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="1124.6" y="108.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">proceed</text>
+  <line x1="1314.0" y1="120.0" x2="1731.0" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="1522.5" y="108.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">confirm</text>
+  <line x1="1731.0" y1="120.0" x2="2143.8" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="1937.4" y="108.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">pay</text>
+  <line x1="2143.8" y1="120.0" x2="2543.8" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="2343.8" y="108.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">success</text>
+  <line x1="2143.8" y1="120.0" x2="2548.0" y2="240.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="2345.9" y="168.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">declined</text>
+  <line x1="2543.8" y1="120.0" x2="2909.8" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="2909.8" y1="120.0" x2="3318.2" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="3318.2" y1="120.0" x2="3714.0" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="3516.1" y="108.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">return</text>
+  <line x1="2548.0" y1="240.0" x2="2943.8" y2="240.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <rect x="60.0" y="95.0" width="167.5" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="143.8" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Customer Visits</text>
+  <rect x="460.0" y="95.0" width="167.5" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="543.8" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Browse Products</text>
+  <rect x="860.0" y="95.0" width="150.5" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="935.2" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Shopping Cart</text>
+  <circle cx="1314.0" cy="120.0" r="54.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="1314.0" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Checkout</text>
+  <rect x="1660.0" y="95.0" width="142.0" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="1731.0" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Order Review</text>
+  <rect x="2060.0" y="95.0" width="167.5" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="2143.8" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Payment Gateway</text>
+  <rect x="2460.0" y="95.0" width="167.5" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="2543.8" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Order Confirmed</text>
+  <rect x="2460.0" y="215.0" width="176.0" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="2548.0" y="240.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Payment Declined</text>
+  <rect x="2860.0" y="95.0" width="99.5" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="2909.8" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Shipped</text>
+  <rect x="2860.0" y="215.0" width="167.5" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="2943.8" y="240.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Order Cancelled</text>
+  <rect x="3260.0" y="95.0" width="116.5" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="3318.2" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Delivered</text>
+  <rect x="3660.0" y="95.0" width="108.0" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="3714.0" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Returned</text>
+</svg>

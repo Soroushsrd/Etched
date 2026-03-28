@@ -130,8 +130,8 @@ void Tokenizer::handleIdentifier() {
 Result<void> Tokenizer::handleString() {
     while (peek() != '"' && !isAtEnd()) {
         if (peek() == '\n') {
-            line++;
-            column = 1;
+            return Result<void>::err("Tokenizer", "Unterminated string literal",
+                                     line, column);
         }
 
         if (peek() == '\\') {

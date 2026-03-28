@@ -13,14 +13,16 @@ else()
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# Include directories
-include_directories(${PROJECT_SOURCE_DIR}/include/)
 
-# Source files
-file(GLOB_RECURSE SOURCES main.cpp ${PROJECT_SOURCE_DIR}/src/*.cpp)
+# core lib
+file(GLOB_RECURSE LIB_SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
-# Executable
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_library(etched_lib STATIC ${LIB_SOURCES})
+target_include_directories(etched_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
+
+add_executable(${PROJECT_NAME} main.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE etched_lib)
+
 
 # Testing
 enable_testing()

@@ -5,7 +5,7 @@ A domain-specific language and compiler for describing directed graphs as struct
 ## What it does
 
 Write your graph in a clean, readable syntax. Etched tokenizes and parses your source into an AST, runs a topological sort to determine node ordering, computes a layered grid layout, and emits an SVG file ready to use anywhere.
-![Example graph](tests/test.svg)
+![Example graph](tests/outputtest2.svg)
 
 ## Syntax
 
@@ -18,15 +18,25 @@ graph "Order Processing" {
     node cart "Cart"
     node checkout {
         title: "Checkout"
-        style { 
-        shape: circle 
-        fill: true 
-        color: "blue" 
+        style {
+        shape: circle
+        fill: true
+        color: "blue"
+        }
+    }
+
+    node exit {
+        title: "Exit"
+        style {
+        shape: square
+        fill: true
+        color: "purple"
         }
     }
 
     start -> browse -> cart
-    cart -> "proceed" -> checkout -> "confirm" -> review
+    cart -> "Proceed" -> checkout -> "Confirm" -> review
+    cart -> "Nah" -> exit
 }
 ```
 

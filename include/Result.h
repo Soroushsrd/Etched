@@ -8,8 +8,10 @@
 #pragma once
 
 #include <cstddef>
+#include <iostream>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <variant>
 
 // Structured error type — carries phase, location, and message.
@@ -99,5 +101,61 @@ template <typename T> class Result {
         if (isOk())
             throw std::logic_error("Result::error() called on Ok value");
         return std::get<Error>(data);
+    }
+    // print the error to stderr and return false or silently return true
+    bool check() const {
+        if (isErr()) {
+            std::cerr << std::get<Error>(data).format() << "\n";
+            return false;
+        }
+        return true;
+    }
+};
+
+// -----------------------------------------------------------------
+// Result<void>
+//
+// Specialization for functions that succeed with no value but can
+// still fail. No value(), take(), or ok(T) , those don't apply.
+// -----------------------------------------------------------------
+template <> class Result<void> {
+  private:
+    Result() = default;
+    // bool is a cheap stand-in for the empty ok state
+    // we only ever store true here, the Error arm carries all meaning
+    std::variant<bool, Error> data;
+
+  public:
+    static Result ok() {
+        Result r;
+        r.data = true;
+        return r;
+    }
+    static Result err(Error e) {
+        Result r;
+        r.data = std::move(e);
+        return r;
+    }
+    static Result err(std::string phase, std::string msg, size_t line = 0,
+                      size_t column = 0) {
+        return err(Error{std::move(phase), std::move(msg), line, column});
+    }
+
+    bool isOk() const { return std::holds_alternative<bool>(data); }
+    bool isErr() const { return std::holds_alternative<Error>(data); }
+
+    explicit operator bool() const { return isOk(); }
+
+    const Error &error() const {
+        if (isOk())
+            throw std::logic_error("Result::error() called on Ok value");
+        return std::get<Error>(data);
+    }
+    bool check() const {
+        if (isErr()) {
+            std::cerr << std::get<Error>(data).format() << "\n";
+            return false;
+        }
+        return true;
     }
 };

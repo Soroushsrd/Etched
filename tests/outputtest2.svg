@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1811.0 325.0" width="1811.0" height="325.0">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="black" /></marker>
+  </defs>
+  <line x1="101.2" y1="120.0" x2="505.5" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="505.5" y1="120.0" x2="897.0" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="897.0" y1="120.0" x2="1314.0" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="1105.5" y="108.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Proceed</text>
+  <line x1="1314.0" y1="120.0" x2="1705.5" y2="120.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="1509.8" y="108.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Confirm</text>
+  <line x1="897.0" y1="120.0" x2="1297.0" y2="240.0" stroke="black" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="1097.0" y="168.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Nah</text>
+  <rect x="60.0" y="95.0" width="82.5" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="101.2" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Start</text>
+  <rect x="460.0" y="95.0" width="91.0" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="505.5" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Browse</text>
+  <rect x="860.0" y="95.0" width="74.0" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="897.0" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Cart</text>
+  <circle cx="1314.0" cy="120.0" r="54.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="1314.0" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Checkout</text>
+  <rect x="1260.0" y="215.0" width="74.0" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="1297.0" y="240.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">Exit</text>
+  <rect x="1660.0" y="95.0" width="91.0" height="50.0" rx="4.0" fill="white" stroke="black" stroke-width="1.5" />
+  <text x="1705.5" y="120.0" text-anchor="middle" dominant-baseline="middle" font-size="13.0" font-family="sans-serif">review</text>
+</svg>

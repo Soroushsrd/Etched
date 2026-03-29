@@ -11,7 +11,6 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <type_traits>
 #include <variant>
 
 // Structured error type — carries phase, location, and message.
@@ -159,3 +158,5 @@ template <> class Result<void> {
         return true;
     }
 };
+
+using VoidResult = Result<void>;

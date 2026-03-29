@@ -129,8 +129,8 @@ class Tokenizer {
     bool matches(char input);
     void handleDigit();
     void handleIdentifier();
-    Result<void> handleString();
-    Result<void> scanTokens();
+    VoidResult handleString();
+    VoidResult scanTokens();
 };
 
 std::ostream &operator<<(std::ostream &os, const TokenType &tt);

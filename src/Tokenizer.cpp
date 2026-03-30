@@ -262,7 +262,6 @@ Result<std::vector<Token>> Tokenizer::Tokenize() {
         startColumn = column;
         auto r = scanTokens();
         if (!r) {
-            std::cerr << r.error().format() << std ::endl;
             return Result<std::vector<Token>>::err(r.error());
         }
     }

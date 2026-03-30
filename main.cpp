@@ -20,13 +20,18 @@ void run_file(std::ifstream &file) {
     Tokenizer tokenizer(sourceString);
     auto tokens = tokenizer.Tokenize();
     if (tokens.isErr()) {
+        std::cerr << tokens.error().format() << std ::endl;
         return;
     }
     Parser parser(tokens.value());
     auto pr = parser.parse();
+    if (pr.isErr()) {
+        std::cerr << pr.error().format() << std ::endl;
+        return;
+    }
 
     Layout layout;
-    auto result = layout.compute(pr.getGraphDecls().getBody());
+    auto result = layout.compute(pr.value().getGraphDecls().getBody());
     result.print();
 
     SVGEmitter emitter;

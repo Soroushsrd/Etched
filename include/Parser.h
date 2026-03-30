@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "Result.h"
 #include "Tokenizer.h"
 #include <cstddef>
 #include <optional>
@@ -197,14 +198,14 @@ class Program {
 class Parser {
   public:
     Parser(std::vector<Token> tkn) : tokens(std::move(tkn)) {}
-    Program parse();
+    Result<Program> parse();
 
   private:
-    GraphDeclaration parseGraphDecl();
-    GraphBody parseGraphBody();
-    NodeDeclaration parseNodeDecl();
-    NodeBody parseExpNode();
-    EdgeNode parseEdgeStmt();
+    Result<GraphDeclaration> parseGraphDecl();
+    Result<GraphBody> parseGraphBody();
+    Result<NodeDeclaration> parseNodeDecl();
+    Result<NodeBody> parseExpNode();
+    Result<EdgeNode> parseEdgeStmt();
     EdgeNode parseEdgeGrp();
     EdgeNode parseEdgeChain();
 
@@ -223,28 +224,30 @@ class Parser {
     }
     bool isAtEnd() const { return peek().getType() == TokenTag::END; };
     bool matchesType(TokenTag tt) { return peek().getType() == tt; }
-    void consumeToken(TokenTag tt, const std::string &errMsg = "") {
+    VoidResult consumeToken(TokenTag tt, const std::string &errMsg = "") {
         if (matchesType(tt)) {
             advance();
         } else {
-            std::cerr << "Missing token: " << errMsg << std::endl;
+            return VoidResult::err("Parser",
+                                   std::format("Missing Token {}", errMsg));
         }
+        return VoidResult::ok();
     }
-    std::string consumeString(const std::string &errMsg = "") {
+    Result<std::string> consumeString(const std::string &errMsg = "") {
         if (auto str = peek(); str.getType() == TokenTag::STRINGLITERAL) {
             advance();
-            return str.type.as_string();
+            return Result<std::string>::ok(str.type.as_string());
         }
-        std::cerr << "SyntaxErr " << errMsg << std::endl;
-        return "";
+        return Result<std::string>::err("Parser",
+                                        std::format("SyntaxErr {}", errMsg));
     }
-    std::string consumeIdentifier(const std::string &errMsg = "") {
+    Result<std::string> consumeIdentifier(const std::string &errMsg = "") {
         if (auto str = peek(); str.getType() == TokenTag::IDENTIFIER) {
             advance();
-            return str.type.as_string();
+            return Result<std::string>::ok(str.type.as_string());
         }
-        std::cerr << "SyntaxErr " << errMsg << std::endl;
-        return "";
+        return Result<std::string>::err("Parser",
+                                        std::format("SyntaxErr {}", errMsg));
     }
 
   private:
@@ -253,6 +256,3 @@ class Parser {
     // index of the current token in token vector
     size_t current = 0;
 };
-
-void printGraph(const GraphBody &body);
-void printProgram(Program &program);

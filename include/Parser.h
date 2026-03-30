@@ -228,26 +228,32 @@ class Parser {
         if (matchesType(tt)) {
             advance();
         } else {
+            auto token = peek();
             return VoidResult::err("Parser",
-                                   std::format("Missing Token {}", errMsg));
+                                   std::format("Missing Token {}", errMsg),
+                                   token.line, token.column);
         }
         return VoidResult::ok();
     }
     Result<std::string> consumeString(const std::string &errMsg = "") {
-        if (auto str = peek(); str.getType() == TokenTag::STRINGLITERAL) {
+        auto token = peek();
+        if (token.getType() == TokenTag::STRINGLITERAL) {
             advance();
-            return Result<std::string>::ok(str.type.as_string());
+            return Result<std::string>::ok(token.type.as_string());
         }
         return Result<std::string>::err("Parser",
-                                        std::format("SyntaxErr {}", errMsg));
+                                        std::format("SyntaxErr {}", errMsg),
+                                        token.line, token.column);
     }
     Result<std::string> consumeIdentifier(const std::string &errMsg = "") {
-        if (auto str = peek(); str.getType() == TokenTag::IDENTIFIER) {
+        auto token = peek();
+        if (token.getType() == TokenTag::IDENTIFIER) {
             advance();
-            return Result<std::string>::ok(str.type.as_string());
+            return Result<std::string>::ok(token.type.as_string());
         }
         return Result<std::string>::err("Parser",
-                                        std::format("SyntaxErr {}", errMsg));
+                                        std::format("SyntaxErr {}", errMsg),
+                                        token.line, token.column);
     }
 
   private:

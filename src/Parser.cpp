@@ -6,20 +6,14 @@
  */
 
 #include "Parser.h"
-#include "Result.h"
-#include "Tokenizer.h"
-#include <string>
 
 EdgeNode::EdgeNode(std::vector<Edge> ed) : edges(std::move(ed)) {}
 EdgeNode::EdgeNode(std::vector<Edge> ed, bool grp)
     : edges(std::move(ed)), grouped(grp) {}
 
 Result<Program> Parser::parse() {
-    auto graphsRes = parseGraphDecl();
-    if (!graphsRes) {
-        return Result<Program>::err(graphsRes.error());
-    }
-    return Result<Program>::ok(Program(std::move(graphsRes.value())));
+    TRY(graphsRes, parseGraphDecl());
+    return Result<Program>::ok(Program(std::move(graphsRes)));
 }
 
 Result<GraphDeclaration> Parser::parseGraphDecl() {
@@ -64,9 +58,11 @@ Result<NodeDeclaration> Parser::parseNodeDecl() {
         TRY(bRes, parseExpNode());
         return Result<NodeDeclaration>::ok({nameRes, bRes});
     }
+    auto token = peek();
     return Result<NodeDeclaration>::err(
         "Parser",
-        "SyntaxErr: Node declaration doesnt match the required syntax");
+        "SyntaxErr: Node declaration doesnt match the required syntax",
+        token.line, token.column);
 }
 
 Result<NodeBody> Parser::parseExpNode() {
@@ -123,14 +119,20 @@ Result<NodeBody> Parser::parseExpNode() {
                         auto shp = Style::shape(Shapes::SQUARE);
                         sf.emplace_back(shp);
                     } else {
+                        auto token = peek();
                         return Result<NodeBody>::err(
-                            "Parser", "Shape style field supports either "
-                                      "'Circle' or 'Square'");
+                            "Parser",
+                            "Shape style field supports either "
+                            "'Circle' or 'Square'",
+                            token.line, token.column);
                     }
                 } else {
+                    auto token = peek();
                     return Result<NodeBody>::err(
-                        "Parser", "Style field supports either "
-                                  "'Shape','Color', or 'Filling'");
+                        "Parser",
+                        "Style field supports either "
+                        "'Shape','Color', or 'Filling'",
+                        token.line, token.column);
                 }
             }
 

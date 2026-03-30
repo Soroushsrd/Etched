@@ -11,6 +11,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <variant>
 
 // Structured error type — carries phase, location, and message.
@@ -48,20 +49,25 @@ struct Error {
 // -----------------------------------------------------------------
 template <typename T> class Result {
   private:
-    Result() = default;
+    Result(std::variant<T, Error> d) : data(std::move(d)) {}
+
     std::variant<T, Error> data;
 
   public:
+    // Error-forwarding constructor: enables TRY/TRY_VOID macros.
+    // WARNING: Only valid when `other` is in error state.
+    template <typename U>
+    Result(const Result<U> &other) : data(other.error()) {}
+
     static Result ok(T val) {
-        Result r;
-        r.data = std::move(val);
-        return r;
+
+        return Result(
+            std::variant<T, Error>(std::in_place_type<T>, std::move(val)));
     }
 
     static Result err(Error err) {
-        Result r;
-        r.data = std::move(err);
-        return r;
+        return Result(
+            std::variant<T, Error>(std::in_place_type<Error>, std::move(err)));
     }
 
     static Result err(std::string phase, std::string msg, size_t line = 0,
@@ -125,6 +131,11 @@ template <> class Result<void> {
     std::variant<bool, Error> data;
 
   public:
+    // Error-forwarding constructor: enables TRY/TRY_VOID macros.
+    // WARNING: Only valid when `other` is in error state.
+    template <typename U>
+    Result(const Result<U> &other) : data(other.error()) {}
+
     static Result ok() {
         Result r;
         r.data = true;
@@ -160,3 +171,13 @@ template <> class Result<void> {
 };
 
 using VoidResult = Result<void>;
+
+#define TRY(dest, expr)                                                        \
+    auto _tmp_##dest = (expr);                                                 \
+    if (!_tmp_##dest)                                                          \
+        return _tmp_##dest;                                                    \
+    auto &dest = _tmp_##dest.value();
+
+#define TRY_VOID(expr)                                                         \
+    if (auto _tmp = (expr); !_tmp)                                             \
+        return _tmp;
